@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import './ChatBot.css';
 
 export default function ChatBot() {
   const [message, setMessage] = useState('');
@@ -41,47 +42,55 @@ export default function ChatBot() {
   }
 
   function handleFileChange(e) {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    if (selectedFile && selectedFile.type.startsWith('image/')) {
+      setFile(selectedFile);
+    } else {
+      alert('Please select an image file');
+      fileInputRef.current.value = '';
+    }
   }
 
   return (
     <div className="chat-bot">
       <div className="chat-history">
         {chatHistory.map((chat, index) => (
-          <div key={index}>
-            <p>You: {chat.user}</p>
-            {chat.file_url && (
-              <div>
-                {chat.file_url.match(/\.(jpeg|jpg|gif|png)$/) ? (
-                  <img src={chat.file_url} alt="User upload" style={{ maxWidth: '200px' }} />
-                ) : chat.file_url.match(/\.(mp3|wav|ogg)$/) ? (
-                  <audio controls src={chat.file_url}>
-                    Your browser does not support the audio element.
-                  </audio>
-                ) : (
-                  <a href={chat.file_url} target="_blank" rel="noopener noreferrer">View file</a>
-                )}
-              </div>
-            )}
-            <p>MedBot: {chat.bot}</p>
+          <div key={index} className="chat-message">
+            <div className="user-message">
+              <p>You: {chat.user}</p>
+              {chat.file_url && chat.file_url.match(/\.(jpeg|jpg|gif|png)$/) && (
+                <img src={chat.file_url} alt="User upload" className="user-image" />
+              )}
+            </div>
+            <div className="bot-message">
+              <p>MedBot: {chat.bot}</p>
+            </div>
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="chat-form">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type your message..."
+          className="message-input"
         />
         <input
           type="file"
           onChange={handleFileChange}
-          accept="image/*,audio/*"
+          accept="image/*"
           ref={fileInputRef}
+          className="file-input"
+          id="file-input"
         />
-        <button type="submit">Send</button>
+        <label htmlFor="file-input" className="file-input-label">
+          📎
+        </label>
+        <button type="submit" className="send-button">Send</button>
       </form>
     </div>
   );
 }
+
+
