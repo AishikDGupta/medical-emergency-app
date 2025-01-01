@@ -1,21 +1,24 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-import 'firebase/storage';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
-};
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <div className="app-container">
+          <Switch>
+            <Route exact path="/login" component={Login} />
+            <PrivateRoute exact path="/dashboard" component={Dashboard} />
+            <Redirect from="/" to="/login" />
+          </Switch>
+        </div>
+      </AuthProvider>
+    </Router>
+  );
+}
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-
-export const auth = app.auth();
-export const firestore = app.firestore();
-export const storage = app.storage();
-export default app;
+export default App;
