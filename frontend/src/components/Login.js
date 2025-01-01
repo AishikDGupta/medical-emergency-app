@@ -25,7 +25,7 @@ export default function Login() {
       } else {
         await signup(email, password);
       }
-      history.push('/');
+      history.push('/dashboard');
     } catch (error) {
       setError(isLogin ? 'Failed to log in' : 'Failed to create an account');
       console.error(error);
@@ -77,4 +77,6 @@ export default function Login() {
     </div>
   );
 }
+
+
 
